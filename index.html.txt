@@ -1,0 +1,2445 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+  >
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+  <style>
+
+    * {
+      box-sizing: border-box;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+
+    body {
+
+      margin: 0;
+
+      background:
+        linear-gradient(
+          135deg,
+          #f4f7fb,
+          #e9eef5
+        );
+
+      color: #1f2937;
+
+    }
+
+
+    .header {
+
+      background:
+        linear-gradient(
+          135deg,
+          #111827,
+          #1f2937
+        );
+
+      color: white;
+
+      padding: 25px 35px;
+
+      display: flex;
+
+      justify-content: space-between;
+
+      align-items: center;
+
+      box-shadow:
+        0 5px 20px
+        rgba(0,0,0,.15);
+
+    }
+
+
+    .header-left h1 {
+
+      margin: 0;
+
+      font-size: 26px;
+
+    }
+
+
+    .header-left p {
+
+      margin:
+        6px 0 0;
+
+      opacity: .8;
+
+    }
+
+
+    .live {
+
+      background: #22c55e;
+
+      padding:
+        8px 15px;
+
+      border-radius: 20px;
+
+      font-weight: bold;
+
+      font-size: 13px;
+
+    }
+
+
+    .container {
+
+      padding: 25px;
+
+      max-width: 1600px;
+
+      margin: auto;
+
+    }
+
+
+    .filters {
+
+      background: white;
+
+      padding: 20px;
+
+      border-radius: 14px;
+
+      display: grid;
+
+      grid-template-columns:
+        repeat(3, 1fr);
+
+      gap: 15px;
+
+      margin-bottom: 25px;
+
+      box-shadow:
+        0 5px 20px
+        rgba(0,0,0,.07);
+
+    }
+
+
+    .filter-group label {
+
+      display: block;
+
+      margin-bottom: 7px;
+
+      font-weight: bold;
+
+      font-size: 13px;
+
+    }
+
+
+    select {
+
+      width: 100%;
+
+      padding: 11px;
+
+      border:
+        1px solid #d1d5db;
+
+      border-radius: 8px;
+
+      background: white;
+
+      cursor: pointer;
+
+    }
+
+
+    .kpi-grid {
+
+      display: grid;
+
+      grid-template-columns:
+        repeat(4, 1fr);
+
+      gap: 18px;
+
+      margin-bottom: 25px;
+
+    }
+
+
+    .kpi {
+
+      background: white;
+
+      padding: 20px;
+
+      border-radius: 14px;
+
+      box-shadow:
+        0 5px 20px
+        rgba(0,0,0,.07);
+
+      position: relative;
+
+      overflow: hidden;
+
+    }
+
+
+    .kpi-title {
+
+      font-size: 13px;
+
+      color: #6b7280;
+
+      font-weight: bold;
+
+    }
+
+
+    .kpi-value {
+
+      font-size: 30px;
+
+      font-weight: bold;
+
+      margin-top: 8px;
+
+    }
+
+
+    .section-title {
+
+      margin:
+        10px 0 15px;
+
+      font-size: 19px;
+
+      font-weight: bold;
+
+    }
+
+
+    .charts {
+
+      display: grid;
+
+      grid-template-columns:
+        repeat(2, 1fr);
+
+      gap: 20px;
+
+    }
+
+
+    .card {
+
+      background: white;
+
+      border-radius: 14px;
+
+      padding: 20px;
+
+      box-shadow:
+        0 5px 20px
+        rgba(0,0,0,.07);
+
+    }
+
+
+    .card.full {
+
+      grid-column:
+        1 / -1;
+
+    }
+
+
+    .chart-container {
+
+      position: relative;
+
+      height: 330px;
+
+    }
+
+
+    .comparison-controls {
+
+      display: flex;
+
+      gap: 15px;
+
+      margin-bottom: 20px;
+
+      align-items: end;
+
+    }
+
+
+    .comparison-select {
+
+      width: 280px;
+
+    }
+
+
+    .comparison-table {
+
+      width: 100%;
+
+      border-collapse: collapse;
+
+      margin-top: 20px;
+
+    }
+
+
+    .comparison-table th {
+
+      background: #f3f4f6;
+
+      text-align: left;
+
+      padding: 12px;
+
+      font-size: 13px;
+
+    }
+
+
+    .comparison-table td {
+
+      padding: 12px;
+
+      border-top:
+        1px solid #e5e7eb;
+
+      font-size: 13px;
+
+    }
+
+
+    .comparison-table tr:hover {
+
+      background: #f9fafb;
+
+    }
+
+
+    .status-good {
+
+      font-weight: bold;
+
+    }
+
+
+    .empty {
+
+      text-align: center;
+
+      padding: 40px;
+
+      color: #6b7280;
+
+    }
+
+
+    @media(max-width: 1000px) {
+
+      .kpi-grid {
+
+        grid-template-columns:
+          repeat(2, 1fr);
+
+      }
+
+      .charts {
+
+        grid-template-columns:
+          1fr;
+
+      }
+
+    }
+
+
+    @media(max-width: 700px) {
+
+      .filters {
+
+        grid-template-columns:
+          1fr;
+
+      }
+
+      .kpi-grid {
+
+        grid-template-columns:
+          1fr;
+
+      }
+
+      .header {
+
+        flex-direction: column;
+
+        gap: 15px;
+
+        align-items: flex-start;
+
+      }
+
+      .comparison-controls {
+
+        flex-direction: column;
+
+        align-items: stretch;
+
+      }
+
+      .comparison-select {
+
+        width: 100%;
+
+      }
+
+    }
+
+  </style>
+
+</head>
+
+
+<body>
+
+
+  <!-- HEADER -->
+
+  <div class="header">
+
+    <div class="header-left">
+
+      <h1>
+        Rowad Modern Engineering
+      </h1>
+
+      <p>
+        HSE Department
+      </p>
+
+    </div>
+
+
+    <div class="live">
+      ● LIVE DASHBOARD
+    </div>
+
+  </div>
+
+
+  <div class="container">
+
+
+    <!-- FILTERS -->
+
+    <div class="filters">
+
+
+      <div class="filter-group">
+
+        <label>
+          Year
+        </label>
+
+        <select id="year">
+
+          <option value="All Years">
+            All Years
+          </option>
+
+          <option value="2026">
+            2026
+          </option>
+
+          <option value="2027">
+            2027
+          </option>
+
+          <option value="2028">
+            2028
+          </option>
+
+        </select>
+
+      </div>
+
+
+      <div class="filter-group">
+
+        <label>
+          Month
+        </label>
+
+        <select id="month">
+
+          <option value="All Months">
+            All Months
+          </option>
+
+          <option value="January">January</option>
+          <option value="February">February</option>
+          <option value="March">March</option>
+          <option value="April">April</option>
+          <option value="May">May</option>
+          <option value="June">June</option>
+          <option value="July">July</option>
+          <option value="August">August</option>
+          <option value="September">September</option>
+          <option value="October">October</option>
+          <option value="November">November</option>
+          <option value="December">December</option>
+
+        </select>
+
+      </div>
+
+
+      <div class="filter-group">
+
+        <label>
+          Project
+        </label>
+
+        <select id="project">
+
+          <option value="All Projects">
+            All Projects
+          </option>
+
+        </select>
+
+      </div>
+
+    </div>
+
+
+    <!-- KPI -->
+
+    <div class="kpi-grid">
+
+
+      <div class="kpi">
+
+        <div class="kpi-title">
+          Total Manpower
+        </div>
+
+        <div
+          class="kpi-value"
+          id="manpower"
+        >
+          0
+        </div>
+
+      </div>
+
+
+      <div class="kpi">
+
+        <div class="kpi-title">
+          Safe Man-Hours
+        </div>
+
+        <div
+          class="kpi-value"
+          id="manhours"
+        >
+          0
+        </div>
+
+      </div>
+
+
+      <div class="kpi">
+
+        <div class="kpi-title">
+          Safety Manpower
+        </div>
+
+        <div
+          class="kpi-value"
+          id="safety"
+        >
+          0
+        </div>
+
+      </div>
+
+
+      <div class="kpi">
+
+        <div class="kpi-title">
+          Recordable
+        </div>
+
+        <div
+          class="kpi-value"
+          id="recordable"
+        >
+          0
+        </div>
+
+      </div>
+
+
+      <div class="kpi">
+
+        <div class="kpi-title">
+          NCR Closure
+        </div>
+
+        <div
+          class="kpi-value"
+          id="ncr"
+        >
+          0%
+        </div>
+
+      </div>
+
+
+      <div class="kpi">
+
+        <div class="kpi-title">
+          Walkdowns
+        </div>
+
+        <div
+          class="kpi-value"
+          id="walkdowns"
+        >
+          0
+        </div>
+
+      </div>
+
+
+      <div class="kpi">
+
+        <div class="kpi-title">
+          Action Tracking
+        </div>
+
+        <div
+          class="kpi-value"
+          id="actions"
+        >
+          0
+        </div>
+
+      </div>
+
+
+      <div class="kpi">
+
+        <div class="kpi-title">
+          Toolbox Talks
+        </div>
+
+        <div
+          class="kpi-value"
+          id="toolbox"
+        >
+          0
+        </div>
+
+      </div>
+
+
+      <div class="kpi">
+
+        <div class="kpi-title">
+          Incident Rate
+        </div>
+
+        <div
+          class="kpi-value"
+          id="incidentRate"
+        >
+          0
+        </div>
+
+      </div>
+
+
+      <div class="kpi">
+
+        <div class="kpi-title">
+          Near Miss
+        </div>
+
+        <div
+          class="kpi-value"
+          id="nearMiss"
+        >
+          0
+        </div>
+
+      </div>
+
+
+      <div class="kpi">
+
+        <div class="kpi-title">
+          First Aid
+        </div>
+
+        <div
+          class="kpi-value"
+          id="firstAid"
+        >
+          0
+        </div>
+
+      </div>
+
+
+      <div class="kpi">
+
+        <div class="kpi-title">
+          LTI
+        </div>
+
+        <div
+          class="kpi-value"
+          id="lti"
+        >
+          0
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- PROJECT COMPARISON -->
+
+    <div class="section-title">
+      PROJECT PERFORMANCE COMPARISON
+    </div>
+
+
+    <div class="card full">
+
+
+      <div class="comparison-controls">
+
+
+        <div class="filter-group comparison-select">
+
+          <label>
+            Comparison Metric
+          </label>
+
+          <select id="comparisonMetric">
+
+            <option value="manpower">
+              Total Manpower
+            </option>
+
+            <option value="manhours">
+              Man-Hours
+            </option>
+
+            <option value="safety">
+              Safety Manpower
+            </option>
+
+            <option value="recordable">
+              Recordable
+            </option>
+
+            <option value="nearMiss">
+              Near Miss
+            </option>
+
+            <option value="firstAid">
+              First Aid
+            </option>
+
+            <option value="lti">
+              LTI
+            </option>
+
+            <option value="walkdowns">
+              Walkdowns
+            </option>
+
+            <option value="actions">
+              Action Tracking
+            </option>
+
+            <option value="toolbox">
+              Toolbox Talks
+            </option>
+
+            <option value="training">
+              Training
+            </option>
+
+            <option value="ncr">
+              NCR Closure
+            </option>
+
+          </select>
+
+        </div>
+
+      </div>
+
+
+      <div class="chart-container">
+
+        <canvas
+          id="projectComparisonChart"
+        ></canvas>
+
+      </div>
+
+
+      <table
+        class="comparison-table"
+        id="comparisonTable"
+      >
+
+        <thead>
+
+          <tr>
+
+            <th>
+              Project
+            </th>
+
+            <th>
+              Manpower
+            </th>
+
+            <th>
+              Man-Hours
+            </th>
+
+            <th>
+              Recordable
+            </th>
+
+            <th>
+              Near Miss
+            </th>
+
+            <th>
+              First Aid
+            </th>
+
+            <th>
+              LTI
+            </th>
+
+            <th>
+              Walkdowns
+            </th>
+
+            <th>
+              Actions
+            </th>
+
+          </tr>
+
+        </thead>
+
+        <tbody id="comparisonTableBody">
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+
+    <!-- CHARTS -->
+
+    <div class="section-title">
+      HSE ANALYTICS
+    </div>
+
+
+    <div class="charts">
+
+
+      <div class="card full">
+
+        <h3>
+          Monthly HSE Performance Trend
+        </h3>
+
+        <div class="chart-container">
+
+          <canvas
+            id="monthlyTrend"
+          ></canvas>
+
+        </div>
+
+      </div>
+
+
+      <div class="card">
+
+        <h3>
+          HSE Activity Performance
+        </h3>
+
+        <div class="chart-container">
+
+          <canvas
+            id="activityChart"
+          ></canvas>
+
+        </div>
+
+      </div>
+
+
+      <div class="card">
+
+        <h3>
+          Manpower Mix
+        </h3>
+
+        <div class="chart-container">
+
+          <canvas
+            id="manpowerChart"
+          ></canvas>
+
+        </div>
+
+      </div>
+
+
+      <div class="card">
+
+        <h3>
+          Incident Analysis
+        </h3>
+
+        <div class="chart-container">
+
+          <canvas
+            id="incidentChart"
+          ></canvas>
+
+        </div>
+
+      </div>
+
+
+      <div class="card">
+
+        <h3>
+          Safety Performance
+        </h3>
+
+        <div class="chart-container">
+
+          <canvas
+            id="radarChart"
+          ></canvas>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+<script>
+
+
+/* =========================================================
+   APPS SCRIPT API URL
+   ========================================================= */
+
+const API_URL =
+  'https://script.google.com/macros/s/AKfycbwsm6oqRxw26Ejq1L5XatKsDWiINGDCvgHD0a4qTIjoBf7vvnvPBmumdmtBlZSOxtPm/exec';
+
+
+/* =========================================================
+   GLOBAL VARIABLES
+   ========================================================= */
+
+let charts = {};
+
+let comparisonData = [];
+
+let jsonpCounter = 0;
+
+
+/* =========================================================
+   API CALL - JSONP
+   ========================================================= */
+
+function callAPI(action, params = {}) {
+
+  return new Promise(function(resolve, reject) {
+
+    const callbackName =
+      '__hse_callback_' +
+      Date.now() +
+      '_' +
+      (++jsonpCounter);
+
+
+    const script =
+      document.createElement('script');
+
+
+    const queryParams =
+      new URLSearchParams();
+
+
+    queryParams.set(
+      'action',
+      action
+    );
+
+
+    queryParams.set(
+      'callback',
+      callbackName
+    );
+
+
+    Object.keys(params).forEach(function(key) {
+
+      queryParams.set(
+        key,
+        params[key]
+      );
+
+    });
+
+
+    script.src =
+      API_URL +
+      '?' +
+      queryParams.toString();
+
+
+    let completed = false;
+
+
+    function cleanup() {
+
+      delete window[callbackName];
+
+      if (
+        script.parentNode
+      ) {
+
+        script.parentNode.removeChild(
+          script
+        );
+
+      }
+
+    }
+
+
+    window[callbackName] =
+      function(data) {
+
+        if (completed) {
+          return;
+        }
+
+        completed = true;
+
+        cleanup();
+
+
+        if (
+          data &&
+          data.error
+        ) {
+
+          reject(
+            new Error(
+              data.message ||
+              'API Error'
+            )
+          );
+
+          return;
+
+        }
+
+
+        resolve(data);
+
+      };
+
+
+    script.onerror =
+      function() {
+
+        if (completed) {
+          return;
+        }
+
+        completed = true;
+
+        cleanup();
+
+
+        reject(
+          new Error(
+            'Unable to connect to HSE Dashboard API.'
+          )
+        );
+
+      };
+
+
+    document.body.appendChild(
+      script
+    );
+
+  });
+
+}
+
+
+/* =========================================================
+   LOAD PROJECTS
+   ========================================================= */
+
+function loadProjects() {
+
+  callAPI(
+    'getProjects'
+  )
+
+  .then(function(projects) {
+
+    const select =
+      document.getElementById(
+        'project'
+      );
+
+
+    select.innerHTML =
+      '<option value="All Projects">' +
+      'All Projects' +
+      '</option>';
+
+
+    if (
+      Array.isArray(projects)
+    ) {
+
+      projects.forEach(
+        function(project) {
+
+          const option =
+            document.createElement(
+              'option'
+            );
+
+
+          option.value =
+            project;
+
+
+          option.textContent =
+            project;
+
+
+          select.appendChild(
+            option
+          );
+
+        }
+      );
+
+    }
+
+
+    loadDashboard();
+
+  })
+
+
+  .catch(function(error) {
+
+    console.error(
+      'Project loading error:',
+      error
+    );
+
+
+    loadDashboard();
+
+  });
+
+}
+
+
+/* =========================================================
+   LOAD DASHBOARD
+   ========================================================= */
+
+function loadDashboard() {
+
+  const year =
+    document.getElementById(
+      'year'
+    ).value;
+
+
+  const month =
+    document.getElementById(
+      'month'
+    ).value;
+
+
+  const project =
+    document.getElementById(
+      'project'
+    ).value;
+
+
+  callAPI(
+    'getDashboardData',
+    {
+
+      year:
+        year,
+
+      month:
+        month,
+
+      project:
+        project
+
+    }
+  )
+
+
+  .then(function(data) {
+
+    updateDashboard(
+      data
+    );
+
+  })
+
+
+  .catch(function(error) {
+
+    console.error(
+      'Dashboard loading error:',
+      error
+    );
+
+
+    alert(
+      'Error loading dashboard: ' +
+      error.message
+    );
+
+  });
+
+
+  loadProjectComparison();
+
+}
+
+
+/* =========================================================
+   UPDATE DASHBOARD
+   ========================================================= */
+
+function updateDashboard(data) {
+
+  if (!data) {
+    return;
+  }
+
+
+  document.getElementById(
+    'manpower'
+  ).textContent =
+    formatNumber(
+      data.manpower
+    );
+
+
+  document.getElementById(
+    'manhours'
+  ).textContent =
+    formatNumber(
+      data.manhours
+    );
+
+
+  document.getElementById(
+    'safety'
+  ).textContent =
+    formatNumber(
+      data.safety
+    );
+
+
+  document.getElementById(
+    'recordable'
+  ).textContent =
+    formatNumber(
+      data.recordable
+    );
+
+
+  document.getElementById(
+    'ncr'
+  ).textContent =
+    formatPercent(
+      data.ncr
+    );
+
+
+  document.getElementById(
+    'walkdowns'
+  ).textContent =
+    formatNumber(
+      data.walkdowns
+    );
+
+
+  document.getElementById(
+    'actions'
+  ).textContent =
+    formatNumber(
+      data.actions
+    );
+
+
+  document.getElementById(
+    'toolbox'
+  ).textContent =
+    formatNumber(
+      data.toolbox
+    );
+
+
+  document.getElementById(
+    'incidentRate'
+  ).textContent =
+    formatNumber(
+      data.incidentRate
+    );
+
+
+  document.getElementById(
+    'nearMiss'
+  ).textContent =
+    formatNumber(
+      data.nearMiss
+    );
+
+
+  document.getElementById(
+    'firstAid'
+  ).textContent =
+    formatNumber(
+      data.firstAid
+    );
+
+
+  document.getElementById(
+    'lti'
+  ).textContent =
+    formatNumber(
+      data.lti
+    );
+
+
+  drawCharts(
+    data
+  );
+
+}
+
+
+/* =========================================================
+   PROJECT COMPARISON
+   ========================================================= */
+
+function loadProjectComparison() {
+
+  const year =
+    document.getElementById(
+      'year'
+    ).value;
+
+
+  const month =
+    document.getElementById(
+      'month'
+    ).value;
+
+
+  callAPI(
+    'getProjectComparison',
+    {
+
+      year:
+        year,
+
+      month:
+        month
+
+    }
+  )
+
+
+  .then(function(data) {
+
+    comparisonData =
+      data || [];
+
+
+    drawProjectComparison();
+
+    updateComparisonTable();
+
+  })
+
+
+  .catch(function(error) {
+
+    console.error(
+      'Project comparison error:',
+      error
+    );
+
+  });
+
+}
+
+
+/* =========================================================
+   DRAW PROJECT COMPARISON
+   ========================================================= */
+
+function drawProjectComparison() {
+
+  const canvas =
+    document.getElementById(
+      'projectComparisonChart'
+    );
+
+
+  if (!canvas) {
+    return;
+  }
+
+
+  const metric =
+    document.getElementById(
+      'comparisonMetric'
+    ).value;
+
+
+  const labels =
+    comparisonData.map(
+      function(item) {
+
+        return item.project;
+
+      }
+    );
+
+
+  const values =
+    comparisonData.map(
+      function(item) {
+
+        return Number(
+          item[metric] || 0
+        );
+
+      }
+    );
+
+
+  if (
+    charts.projectComparison
+  ) {
+
+    charts.projectComparison.destroy();
+
+  }
+
+
+  charts.projectComparison =
+    new Chart(
+
+      canvas,
+
+      {
+
+        type: 'bar',
+
+
+        data: {
+
+          labels:
+            labels,
+
+
+          datasets: [{
+
+            label:
+              getMetricLabel(
+                metric
+              ),
+
+
+            data:
+              values,
+
+
+            borderWidth:
+              1
+
+          }]
+
+        },
+
+
+        options: {
+
+          responsive:
+            true,
+
+
+          maintainAspectRatio:
+            false,
+
+
+          plugins: {
+
+            legend: {
+
+              display:
+                false
+
+            }
+
+          },
+
+
+          scales: {
+
+            y: {
+
+              beginAtZero:
+                true
+
+            }
+
+          }
+
+        }
+
+      }
+
+    );
+
+}
+
+
+/* =========================================================
+   COMPARISON TABLE
+   ========================================================= */
+
+function updateComparisonTable() {
+
+  const tbody =
+    document.getElementById(
+      'comparisonTableBody'
+    );
+
+
+  tbody.innerHTML =
+    '';
+
+
+  if (
+    !comparisonData ||
+    comparisonData.length === 0
+  ) {
+
+    tbody.innerHTML =
+
+      '<tr>' +
+
+      '<td colspan="9" class="empty">' +
+
+      'No project data available for the selected filters.' +
+
+      '</td>' +
+
+      '</tr>';
+
+
+    return;
+
+  }
+
+
+  comparisonData.forEach(
+    function(item) {
+
+      const row =
+        document.createElement(
+          'tr'
+        );
+
+
+      row.innerHTML =
+
+        '<td><strong>' +
+
+        escapeHtml(
+          item.project
+        ) +
+
+        '</strong></td>' +
+
+
+        '<td>' +
+
+        formatNumber(
+          item.manpower
+        ) +
+
+        '</td>' +
+
+
+        '<td>' +
+
+        formatNumber(
+          item.manhours
+        ) +
+
+        '</td>' +
+
+
+        '<td>' +
+
+        formatNumber(
+          item.recordable
+        ) +
+
+        '</td>' +
+
+
+        '<td>' +
+
+        formatNumber(
+          item.nearMiss
+        ) +
+
+        '</td>' +
+
+
+        '<td>' +
+
+        formatNumber(
+          item.firstAid
+        ) +
+
+        '</td>' +
+
+
+        '<td>' +
+
+        formatNumber(
+          item.lti
+        ) +
+
+        '</td>' +
+
+
+        '<td>' +
+
+        formatNumber(
+          item.walkdowns
+        ) +
+
+        '</td>' +
+
+
+        '<td>' +
+
+        formatNumber(
+          item.actions
+        ) +
+
+        '</td>';
+
+
+      tbody.appendChild(
+        row
+      );
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   CHARTS
+   ========================================================= */
+
+function drawCharts(data) {
+
+
+  if (
+    charts.monthly
+  ) {
+
+    charts.monthly.destroy();
+
+  }
+
+
+  if (
+    charts.activity
+  ) {
+
+    charts.activity.destroy();
+
+  }
+
+
+  if (
+    charts.manpower
+  ) {
+
+    charts.manpower.destroy();
+
+  }
+
+
+  if (
+    charts.incident
+  ) {
+
+    charts.incident.destroy();
+
+  }
+
+
+  if (
+    charts.radar
+  ) {
+
+    charts.radar.destroy();
+
+  }
+
+
+  const monthlyData =
+    Array.isArray(
+      data.monthly
+    )
+      ? data.monthly
+      : [];
+
+
+  const months =
+    monthlyData.map(
+      function(item) {
+
+        return item.month;
+
+      }
+    );
+
+
+  charts.monthly =
+    new Chart(
+
+      document.getElementById(
+        'monthlyTrend'
+      ),
+
+      {
+
+        type: 'line',
+
+
+        data: {
+
+          labels:
+            months,
+
+
+          datasets: [
+
+            {
+
+              label:
+                'Manpower',
+
+
+              data:
+                monthlyData.map(
+                  function(x) {
+
+                    return x.manpower;
+
+                  }
+                ),
+
+
+              tension:
+                .3
+
+            },
+
+
+            {
+
+              label:
+                'Recordable',
+
+
+              data:
+                monthlyData.map(
+                  function(x) {
+
+                    return x.recordable;
+
+                  }
+                ),
+
+
+              tension:
+                .3
+
+            },
+
+
+            {
+
+              label:
+                'Near Miss',
+
+
+              data:
+                monthlyData.map(
+                  function(x) {
+
+                    return x.nearMiss;
+
+                  }
+                ),
+
+
+              tension:
+                .3
+
+            }
+
+          ]
+
+        },
+
+
+        options: {
+
+          responsive:
+            true,
+
+
+          maintainAspectRatio:
+            false
+
+        }
+
+      }
+
+    );
+
+
+  charts.activity =
+    new Chart(
+
+      document.getElementById(
+        'activityChart'
+      ),
+
+      {
+
+        type:
+          'bar',
+
+
+        data: {
+
+          labels: [
+
+            'Walkdowns',
+
+            'Actions',
+
+            'Toolbox',
+
+            'Training'
+
+          ],
+
+
+          datasets: [{
+
+            label:
+              'Performance',
+
+
+            data: [
+
+              data.walkdowns,
+
+              data.actions,
+
+              data.toolbox,
+
+              data.training
+
+            ]
+
+          }]
+
+        },
+
+
+        options: {
+
+          responsive:
+            true,
+
+
+          maintainAspectRatio:
+            false,
+
+
+          scales: {
+
+            y: {
+
+              beginAtZero:
+                true
+
+            }
+
+          }
+
+        }
+
+      }
+
+    );
+
+
+  charts.manpower =
+    new Chart(
+
+      document.getElementById(
+        'manpowerChart'
+      ),
+
+      {
+
+        type:
+          'doughnut',
+
+
+        data: {
+
+          labels: [
+
+            'Employee',
+
+            'Casual',
+
+            'Contractors'
+
+          ],
+
+
+          datasets: [{
+
+            data: [
+
+              data.employee,
+
+              data.casual,
+
+              data.contractors
+
+            ]
+
+          }]
+
+        },
+
+
+        options: {
+
+          responsive:
+            true,
+
+
+          maintainAspectRatio:
+            false
+
+        }
+
+      }
+
+    );
+
+
+  charts.incident =
+    new Chart(
+
+      document.getElementById(
+        'incidentChart'
+      ),
+
+      {
+
+        type:
+          'bar',
+
+
+        data: {
+
+          labels: [
+
+            'Near Miss',
+
+            'First Aid',
+
+            'LTI',
+
+            'Property Damage'
+
+          ],
+
+
+          datasets: [{
+
+            label:
+              'Incidents',
+
+
+            data: [
+
+              data.nearMiss,
+
+              data.firstAid,
+
+              data.lti,
+
+              data.property
+
+            ]
+
+          }]
+
+        },
+
+
+        options: {
+
+          responsive:
+            true,
+
+
+          maintainAspectRatio:
+            false,
+
+
+          scales: {
+
+            y: {
+
+              beginAtZero:
+                true
+
+            }
+
+          }
+
+        }
+
+      }
+
+    );
+
+
+  const safetyScore =
+    Math.max(
+      0,
+      100 -
+      Number(
+        data.incidentRate || 0
+      ) * 10
+    );
+
+
+  charts.radar =
+    new Chart(
+
+      document.getElementById(
+        'radarChart'
+      ),
+
+      {
+
+        type:
+          'radar',
+
+
+        data: {
+
+          labels: [
+
+            'Recordable',
+
+            'Near Miss',
+
+            'First Aid',
+
+            'LTI',
+
+            'Environment'
+
+          ],
+
+
+          datasets: [{
+
+            label:
+              'Safety Performance',
+
+
+            data: [
+
+              data.recordable,
+
+              data.nearMiss,
+
+              data.firstAid,
+
+              data.lti,
+
+              data.environment
+
+            ]
+
+          }]
+
+        },
+
+
+        options: {
+
+          responsive:
+            true,
+
+
+          maintainAspectRatio:
+            false,
+
+
+          scales: {
+
+            r: {
+
+              beginAtZero:
+                true
+
+            }
+
+          }
+
+        }
+
+      }
+
+    );
+
+}
+
+
+/* =========================================================
+   METRIC LABEL
+   ========================================================= */
+
+function getMetricLabel(metric) {
+
+  const labels = {
+
+    manpower:
+      'Total Manpower',
+
+    manhours:
+      'Man-Hours',
+
+    safety:
+      'Safety Manpower',
+
+    recordable:
+      'Recordable',
+
+    nearMiss:
+      'Near Miss',
+
+    firstAid:
+      'First Aid',
+
+    lti:
+      'LTI',
+
+    walkdowns:
+      'Walkdowns',
+
+    actions:
+      'Action Tracking',
+
+    toolbox:
+      'Toolbox Talks',
+
+    training:
+      'Training',
+
+    ncr:
+      'NCR Closure'
+
+  };
+
+
+  return labels[metric] ||
+    metric;
+
+}
+
+
+/* =========================================================
+   FORMATTERS
+   ========================================================= */
+
+function formatNumber(value) {
+
+  const num =
+    Number(
+      value || 0
+    );
+
+
+  if (
+    !isFinite(num)
+  ) {
+
+    return '0';
+
+  }
+
+
+  return num.toLocaleString(
+    'en-US',
+    {
+      maximumFractionDigits:
+        2
+    }
+  );
+
+}
+
+
+function formatPercent(value) {
+
+  const num =
+    Number(
+      value || 0
+    );
+
+
+  if (
+    !isFinite(num)
+  ) {
+
+    return '0%';
+
+  }
+
+
+  return num.toLocaleString(
+    'en-US',
+    {
+      maximumFractionDigits:
+        2
+    }
+  ) + '%';
+
+}
+
+
+/* =========================================================
+   HTML ESCAPE
+   ========================================================= */
+
+function escapeHtml(value) {
+
+  return String(
+    value || ''
+  )
+
+    .replace(
+      /&/g,
+      '&amp;'
+    )
+
+    .replace(
+      /</g,
+      '&lt;'
+    )
+
+    .replace(
+      />/g,
+      '&gt;'
+    )
+
+    .replace(
+      /"/g,
+      '&quot;'
+    )
+
+    .replace(
+      /'/g,
+      '&#039;'
+    );
+
+}
+
+
+/* =========================================================
+   EVENTS
+   ========================================================= */
+
+document
+  .getElementById(
+    'year'
+  )
+  .addEventListener(
+    'change',
+    loadDashboard
+  );
+
+
+document
+  .getElementById(
+    'month'
+  )
+  .addEventListener(
+    'change',
+    loadDashboard
+  );
+
+
+document
+  .getElementById(
+    'project'
+  )
+  .addEventListener(
+    'change',
+    loadDashboard
+  );
+
+
+document
+  .getElementById(
+    'comparisonMetric'
+  )
+  .addEventListener(
+    'change',
+    function() {
+
+      drawProjectComparison();
+
+    }
+  );
+
+
+/* =========================================================
+   START
+   ========================================================= */
+
+document.addEventListener(
+  'DOMContentLoaded',
+  function() {
+
+    if (
+      API_URL ===
+      'PUT_YOUR_APPS_SCRIPT_WEB_APP_URL_HERE'
+    ) {
+
+      alert(
+        'Please add your Apps Script Web App URL in API_URL.'
+      );
+
+      return;
+
+    }
+
+
+    loadProjects();
+
+  }
+);
+
+</script>
+
+</body>
+
+</html>
